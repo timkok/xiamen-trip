@@ -897,6 +897,153 @@ body {
   transition: width 0.15s linear;
   border-radius: 0 2px 2px 0;
 }
+
+/* --- 实时倒计时与天气卡片 --- */
+.countdown-weather-card {
+  display: flex;
+  background: var(--card-bg);
+  border: 1px solid var(--sand-dark);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 20px 16px;
+  box-shadow: var(--card-shadow);
+  align-items: stretch;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.countdown-weather-card .widget-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.countdown-weather-card .countdown-col {
+  align-items: center;
+  text-align: center;
+}
+
+.countdown-weather-card .weather-col {
+  padding-left: 15px;
+}
+
+.countdown-weather-card .divider-col {
+  flex: 0 0 1px;
+  background-color: var(--sand-dark);
+  margin: 4px 0;
+}
+
+.countdown-weather-card .widget-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.countdown-weather-card .countdown-days {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin: 4px 0;
+}
+
+.countdown-weather-card .weather-temp {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 4px 0;
+}
+
+.countdown-weather-card .widget-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+@media screen and (max-width: 480px) {
+  .countdown-weather-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .countdown-weather-card .divider-col {
+    display: none;
+  }
+  .countdown-weather-card .weather-col {
+    padding-left: 0;
+    text-align: center;
+    align-items: center;
+  }
+}
+
+/* Seniors Mode Toggle Button */
+.seniors-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.seniors-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Seniors Mode Override Styles */
+body.seniors-mode {
+  font-size: 19px !important;
+}
+
+body.seniors-mode p,
+body.seniors-mode span,
+body.seniors-mode div,
+body.seniors-mode li,
+body.seniors-mode time {
+  font-size: 18px !important;
+  line-height: 1.8 !important;
+}
+
+body.seniors-mode h1,
+body.seniors-mode .hero-title {
+  font-size: 38px !important;
+}
+
+body.seniors-mode h2,
+body.seniors-mode .h3,
+body.seniors-mode h3 {
+  font-size: 26px !important;
+}
+
+body.seniors-mode .timeline-time {
+  font-size: 19px !important;
+  font-weight: 800 !important;
+}
+
+body.seniors-mode .timeline-activity {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+}
+
+body.seniors-mode .timeline-note {
+  font-size: 17px !important;
+  color: #333 !important;
+}
 </style>
 </head>
 <body>
@@ -927,7 +1074,7 @@ body {
     <div class="wave wave-3"></div>
   </div>
   <div class="hero-content">
-    <div class="hero-badge">🎋 2025 · 厦门</div>
+    <div class="hero-badge">🎋 2026 · 厦门</div>
     <h1 class="hero-title">70岁生日家庭行程</h1>
     <p class="hero-subtitle">山海之旅 · 四城四酒店 · 悠闲度假</p>
     <div class="hero-divider"></div>
@@ -949,6 +1096,26 @@ body {
         <span class="hero-stat-label">生日宴</span>
       </div>
     </div>
+    <div>
+      <button id="btn-seniors-mode" class="seniors-toggle-btn" onclick="toggleSeniorsMode()">
+        👴 老人大字模式
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- 0. 实时倒计时与天气卡片 -->
+<section class="countdown-weather-card" id="countdown-weather-section">
+  <div class="widget-col countdown-col">
+    <span class="widget-title">🎂 启程倒计时</span>
+    <div class="countdown-days" id="countdown-days-val">距离出发还有 -- 天</div>
+    <p class="widget-desc">距离奶奶70大寿山海之旅</p>
+  </div>
+  <div class="widget-col divider-col"></div>
+  <div class="widget-col weather-col">
+    <span class="widget-title">☀️ 厦门酷暑防雨提示</span>
+    <div class="weather-temp">平均气温 29℃ ~ 35℃</div>
+    <p class="widget-desc">暑期紫外线极强，午后常有对流雨。请为长辈携带防晒帽、晴雨伞及解暑常用药。</p>
   </div>
 </section>
 
@@ -1000,7 +1167,7 @@ body {
     <div class="day-header">
       <div class="day-header-top">
         <div class="day-icon">🚄</div>
-        <div class="day-title">7/29 周二</div>
+        <div class="day-title">7/29 周三</div>
       </div>
       <div class="day-route">广州东 <span class="day-route-arrow">→</span> 厦门北 <span class="day-route-arrow">→</span> 安溪悦泉</div>
     </div>
@@ -1075,7 +1242,7 @@ body {
     <div class="day-header">
       <div class="day-header-top">
         <div class="day-icon">🏝️</div>
-        <div class="day-title">7/30 周三</div>
+        <div class="day-title">7/30 周四</div>
       </div>
       <div class="day-route">安溪 <span class="day-route-arrow">→</span> 鼓浪屿（晃岩36）</div>
     </div>
@@ -1170,7 +1337,7 @@ body {
     <div class="day-header">
       <div class="day-header-top">
         <div class="day-icon">🌟</div>
-        <div class="day-title">7/31 周四</div>
+        <div class="day-title">7/31 周五</div>
       </div>
       <div class="day-route">鼓浪屿 <span class="day-route-arrow">→</span> 华尔道夫</div>
     </div>
@@ -1259,7 +1426,7 @@ body {
     <div class="day-header">
       <div class="day-header-top">
         <div class="day-icon">🎂</div>
-        <div class="day-title">8/1 周五</div>
+        <div class="day-title">8/1 周六</div>
       </div>
       <div class="day-route">华尔道夫 <span class="day-route-arrow">→</span> 七尚酒店</div>
     </div>
@@ -1342,7 +1509,7 @@ body {
     <div class="day-header">
       <div class="day-header-top">
         <div class="day-icon">🏖️</div>
-        <div class="day-title">8/2 周六</div>
+        <div class="day-title">8/2 周日</div>
       </div>
       <div class="day-route">七尚度假日（不换酒店）</div>
     </div>
@@ -1418,7 +1585,7 @@ body {
     <div class="day-header">
       <div class="day-header-top">
         <div class="day-icon">🏠</div>
-        <div class="day-title">8/3 周日</div>
+        <div class="day-title">8/3 周一</div>
       </div>
       <div class="day-route">返程</div>
     </div>
@@ -1563,7 +1730,7 @@ body {
         </div>
         <div class="info-item">
           <span class="info-bullet">💳</span>
-          <span>预留 8/2 使用 <strong>Chase $500 券</strong>（9月到期）</span>
+          <span><strong>8/2 住宿决策</strong>：已倾向续住七尚，最终以到店房态及现金券核对情况为准（已比较并放弃更换其他集团积分房方案B的计划）</span>
         </div>
         <div class="info-item">
           <span class="info-bullet">🎁</span>
@@ -1606,7 +1773,7 @@ body {
 <div class="footer">
   <div class="footer-emoji">🌊</div>
   <div class="footer-text">山海之旅 · 生日快乐</div>
-  <div class="footer-sub">厦门 · 2025</div>
+  <div class="footer-sub">厦门 · 2026</div>
 </div>
 
 <!-- Back to Top -->
@@ -1713,6 +1880,77 @@ tabs.forEach(function(tab) {
   tab.addEventListener('click', function() {
     setTimeout(animateTimeline, 50);
   });
+});
+
+// 老人模式控制
+var seniorsModeActive = false;
+function toggleSeniorsMode() {
+  seniorsModeActive = !seniorsModeActive;
+  var btn = document.getElementById("btn-seniors-mode");
+  if (seniorsModeActive) {
+    document.body.classList.add("seniors-mode");
+    if (btn) btn.innerHTML = "👵 恢复默认模式";
+    localStorage.setItem("xiamen_seniors_mode", "true");
+  } else {
+    document.body.classList.remove("seniors-mode");
+    if (btn) btn.innerHTML = "👴 老人大字模式";
+    localStorage.setItem("xiamen_seniors_mode", "false");
+  }
+}
+
+// 倒计时计算逻辑
+function updateCountdown() {
+  const targetDate = new Date("2026-07-29T00:00:00+08:00");
+  const endDate = new Date("2026-08-03T23:59:59+08:00");
+  const currentDate = new Date();
+  
+  const targetMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+  const currentMidnight = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+  
+  const timeDiff = targetMidnight.getTime() - currentMidnight.getTime();
+  const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  
+  const countdownEl = document.getElementById("countdown-days-val");
+  const descEl = document.querySelector(".countdown-col .widget-desc");
+  
+  if (countdownEl) {
+    if (daysDiff > 0) {
+      countdownEl.innerHTML = `距离出发还有 <span style="color:#c5a059; font-weight:800;">${daysDiff}</span> 天`;
+      if (descEl) descEl.textContent = "距离 2026年7月29日启程";
+    } else if (currentDate <= endDate) {
+      let tripDay = 1;
+      const month = currentDate.getMonth() + 1;
+      const date = currentDate.getDate();
+      if (month === 7) {
+        if (date === 29) tripDay = 1;
+        if (date === 30) tripDay = 2;
+        if (date === 31) tripDay = 3;
+      } else if (month === 8) {
+        if (date === 1) tripDay = 4;
+        if (date === 2) tripDay = 5;
+        if (date === 3) tripDay = 6;
+      } else {
+        tripDay = Math.floor((currentDate - targetDate) / (1000 * 3600 * 24)) + 1;
+      }
+      countdownEl.innerHTML = `旅途进行中，第 <span style="color:#e74c3c; font-weight:800;">${tripDay}</span> 天`;
+      if (descEl) descEl.textContent = "祝爷爷奶奶健康快乐！";
+    } else {
+      countdownEl.innerHTML = `<span style="font-size: 14px; font-weight: 700; color: #7f8c8d;">祝旅途愉快，期待下次相聚</span>`;
+      if (descEl) descEl.textContent = "2026年厦门之旅已圆满结束";
+    }
+  }
+}
+
+// 页面加载初始化
+window.addEventListener('load', function() {
+  updateCountdown();
+  var storedSeniors = localStorage.getItem("xiamen_seniors_mode");
+  if (storedSeniors === 'true') {
+    seniorsModeActive = true;
+    document.body.classList.add("seniors-mode");
+    var btn = document.getElementById("btn-seniors-mode");
+    if (btn) btn.innerHTML = "👵 恢复默认模式";
+  }
 });
 </script>
 
